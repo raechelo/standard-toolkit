@@ -210,6 +210,30 @@ type ExtendedTableProps<T extends { id: Key }> = {
    * onRowSelectionChange={setSelectedRows}
    */
   onRowSelectionChange?: (rowSelection: RowSelectionState) => void;
+
+  /**
+   * Controlled row highlighting state; an array of row IDs that are highlighted.
+   * Without `onRowHighlightingChange`, the highlighting stays frozen at this value.
+   */
+  rowHighlighting?: string[];
+  /**
+   * Initial row highlighting state for uncontrolled use.
+   * Ignored while `rowHighlighting` is provided.
+   * @default []
+   */
+  defaultRowHighlighting?: string[];
+  /**
+   * Callback function triggered when the row highlighting state changes.
+   * Receives the plain next row highlighting state.
+   *
+   * @param rowHighlighting - The next row highlighting state.
+   *
+   * @example
+   * // Using with a state setter
+   * onRowHighlightingChange={setHighlightedRows}
+   */
+  onRowHighlightingChange?: (rowHighlighting: string[]) => void;
+
   /**
    * Whether the table should take full width and use fixed layout.
    * When true, applies 'w-full table-fixed' classes.
@@ -377,6 +401,8 @@ export type TableContextValue = {
     direction: 'asc' | 'desc' | null,
   ) => void;
   handleColumnReordering?: (index: number) => void;
+  rowHighlighting: string[];
+  setRowHighlighting: Dispatch<SetStateAction<string[]>>;
   /** Active density, applied by header cells and body cells as a module class. */
   variant: DensityVariant;
 };

@@ -23,7 +23,7 @@ export const TableContext = createContext<TableContextValue>({
   persistRowKebabMenu: true,
   persistHeaderKebabMenu: true,
   persistNumerals: true,
-  displayNumerals: false,
+  displayNumerals: true,
   enableSorting: true,
   enableColumnReordering: true,
   enableRowActions: true,
@@ -31,4 +31,6 @@ export const TableContext = createContext<TableContextValue>({
   handleSortChange: () => undefined,
   handleColumnReordering: () => undefined,
   variant: DEFAULT_TABLE_VARIANT,
+  rowHighlighting: [],
+  setRowHighlighting: () => undefined,
 });

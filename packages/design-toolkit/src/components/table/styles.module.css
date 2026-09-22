@@ -28,10 +28,6 @@
       @apply p-xxs overflow-hidden text-ellipsis whitespace-nowrap;
     }
 
-    .hidden {
-      @apply hidden;
-    }
-
     @variant hover {
       @apply fg-primary-bold;
     }
@@ -133,5 +129,9 @@
 
   .hidden {
     @apply hidden;
+  }
+
+  .highlighted {
+    @apply bg-accent-primary-muted border-l-2 border-l-[var(--outline-accent-primary-bold)];
   }
 }

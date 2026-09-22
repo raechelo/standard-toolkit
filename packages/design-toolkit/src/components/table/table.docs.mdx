@@ -204,6 +204,22 @@ const [rowPinning, setRowPinning] = useState<RowPinningState>({
 
 <Canvas of={TableStories.ControlledRowPinning} />
 
+## Row Highlighting
+Highlights a row on user click. Separate from checkbox selection events. Clicking a row does not select a row. Row highlighting is uncontrolled by default; seed it with `defaultRowHighlighting`, or control it with `rowHighlighting` and `onRowPinningChange`.
+
+```tsx
+const [rowHighlighting, setRowHighlighting] = useState<string[]>(['tanner']);
+
+<Table
+  columns={columns}
+  data={data}
+  rowHighlighting={rowHighlighting}
+  onRowHighlighting={setRowHighlighting}
+/>
+```
+
+<Canvas of={TableStories.ControlledRowHighlighting} />
+
 ## Pagination
 
 Table handles client-side data slicing internally when `pageSize` is set. Render `<Pagination>` alongside the Table to provide page navigation - the two components are kept separate so you have full control over Pagination's placement and props.
@@ -271,10 +287,13 @@ Only data mode (`columns` + `data`) accepts `variant`. Custom-children mode
 | `rowPinning` | `RowPinningState` | - | Controlled row pinning state, e.g. `{ top: ['row-1'], bottom: [] }` |
 | `defaultRowPinning` | `RowPinningState` | `{ top: [], bottom: [] }` | Initial row pinning for uncontrolled use; ignored while `rowPinning` is set |
 | `onRowPinningChange` | `(rowPinning: RowPinningState) => void` | - | Called with the plain next pinning state |
+| `rowHighlighting` | `string[]` | `[]` | Controlled row highlighting state. Initiated with a row click. |
+| `setRowHighlighting` | `(id?: string) => void` | - | Called when row highlighting changes |
 | `kebabPosition` | `'left' \| 'right'` | `'right'` | Position of row action menu |
 | `persistHeaderKebabMenu` | `boolean` | `true` | Always show header kebab menu |
 | `persistRowKebabMenu` | `boolean` | `true` | Always show row kebab menu |
 | `persistNumerals` | `boolean` | `false` | Always show row numbers |
+| `displayNumerals` | `boolean` | `true` | Display cell with row numbers |
 | `enableSorting` | `boolean` | `true` | Enable column sorting |
 | `enableColumnReordering` | `boolean` | `true` | Enable column reordering |
 | `enableRowActions` | `boolean` | `true` | Enable row action menu |

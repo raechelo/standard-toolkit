@@ -12,7 +12,9 @@
  */
 
 import { clsx } from '@accelint/design-foundation/lib/utils';
+import { useContext } from 'react';
 import { TableCell } from './cell';
+import { TableContext } from './context';
 import styles from './styles.module.css';
 import type { RowData } from '@tanstack/react-table';
 import type { TableRowProps } from './types';
@@ -48,14 +50,36 @@ export function TableRow<T extends RowData>({
   ...rest
 }: TableRowProps<T>) {
   const cells = row?.getAllCells();
+  const { rowHighlighting, setRowHighlighting } = useContext(TableContext);
+  const isHighlighted = row?.id ? rowHighlighting.includes(row.id) : false;
+
+  const handleRowClick = () => {
+    if (!row?.id) {
+      return;
+    }
+
+    setRowHighlighting((prev) => {
+      if (prev.includes(row.id)) {
+        return prev.filter((id) => id !== row.id);
+      }
+
+      return [...prev, row.id];
+    });
+  };
 
   return (
     <tr
       {...rest}
       ref={ref}
-      className={clsx('group/row', styles.row, className)}
+      className={clsx(
+        'group/row',
+        styles.row,
+        isHighlighted && styles.highlighted,
+        className,
+      )}
       data-pinned={row?.getIsPinned() || null}
       data-selected={row?.getIsSelected() || null}
+      onClick={handleRowClick}
     >
       {children ||
         cells?.map((cell) => <TableCell key={cell.id} cell={cell} />)}
