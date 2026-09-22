@@ -23,6 +23,7 @@ export const TableContext = createContext<TableContextValue>({
   persistRowKebabMenu: true,
   persistHeaderKebabMenu: true,
   persistNumerals: true,
+  displayNumerals: false,
   enableSorting: true,
   enableColumnReordering: true,
   enableRowActions: true,

@@ -131,6 +131,7 @@ function RowActionsMenu<T extends RowData>({ row }: RowActionsMenuProps<T>) {
  * @param props.persistRowKebabMenu - Keep row kebab menu visible.
  * @param props.persistHeaderKebabMenu - Keep header kebab menu visible.
  * @param props.persistNumerals - Keep row numerals visible.
+ * @param props.displayNumerals - Remove row numerals entirely.
  * @param props.enableSorting - Enable column sorting.
  * @param props.enableColumnReordering - Enable column reordering.
  * @param props.enableRowActions - Enable row action menu.
@@ -176,6 +177,7 @@ export function Table<T extends { id: Key }>({
   persistRowKebabMenu = true,
   persistHeaderKebabMenu = true,
   persistNumerals = false,
+  displayNumerals = false,
   enableSorting = true,
   enableColumnReordering = true,
   enableRowActions = true,
@@ -449,7 +451,11 @@ export function Table<T extends { id: Key }>({
     [setColumnOrder],
   );
 
-  const className = clsx(fullWidth && 'w-full table-fixed', rest.className);
+  const className = clsx(
+    styles.table,
+    fullWidth && 'w-full table-fixed',
+    rest.className,
+  );
 
   if (children) {
     return (
@@ -465,6 +471,7 @@ export function Table<T extends { id: Key }>({
         persistRowKebabMenu,
         persistHeaderKebabMenu,
         persistNumerals,
+        displayNumerals,
         enableSorting,
         enableColumnReordering,
         enableRowActions,

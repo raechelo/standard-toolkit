@@ -28,6 +28,10 @@
       @apply p-xxs overflow-hidden text-ellipsis whitespace-nowrap;
     }
 
+    .hidden {
+      @apply hidden;
+    }
+
     @variant hover {
       @apply fg-primary-bold;
     }
@@ -71,12 +75,15 @@
   }
 
   .row {
-    @variant group-not-selected/tbody {
-      @apply border-1 border-transparent;
+    @apply border border-transparent;
+    @apply border-b-(--outline-static);
 
-      @variant first-of-type {
-        border-top-color: var(--outline-static);
-      }
+    @variant hover {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant first-of-type {
+      @apply border-t-(--outline-static);
     }
 
     @variant has-[+[data-selected]] {
@@ -122,5 +129,9 @@
     @variant group-selected/header-cell {
       @apply visible;
     }
+  }
+
+  .hidden {
+    @apply hidden;
   }
 }

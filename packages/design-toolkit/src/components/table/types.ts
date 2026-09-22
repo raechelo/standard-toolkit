@@ -130,6 +130,13 @@ type ExtendedTableProps<T extends { id: Key }> = {
   persistNumerals?: boolean;
 
   /**
+   * Whether to display numeral columns. Takes precedence over persistNumerals.
+   * If true, numeral columns will be fallback to persistNumeral selection.
+   * If false, they will not be visible at all.
+   */
+  displayNumerals?: boolean;
+
+  /**
    * Whether to enable sorting.
    * If true, the table will support sorting.
    * If false, the table will not support sorting.
@@ -360,6 +367,7 @@ export type TableContextValue = {
   persistHeaderKebabMenu: boolean;
   persistRowKebabMenu: boolean;
   persistNumerals: boolean;
+  displayNumerals: boolean;
   moveColumnLeft: (index: number) => void;
   moveColumnRight: (index: number) => void;
   setColumnSelection: Dispatch<SetStateAction<string | null>>;
