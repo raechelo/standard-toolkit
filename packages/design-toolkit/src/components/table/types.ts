@@ -402,7 +402,7 @@ export type TableContextValue = {
   ) => void;
   handleColumnReordering?: (index: number) => void;
   rowHighlighting: string[];
-  setRowHighlighting: Dispatch<SetStateAction<string[]>>;
+  onRowHighlightingChange: Dispatch<SetStateAction<string[]>>;
   /** Active density, applied by header cells and body cells as a module class. */
   variant: DensityVariant;
 };

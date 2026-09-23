@@ -24,12 +24,12 @@ import { TableHeaderCell } from './header-cell';
 import { Table } from './index';
 import { TableRow } from './row';
 import styles from './styles.module.css';
-import type { DensityVariant } from '@/lib/types';
 import type {
   RowPinningState,
   RowSelectionState,
   SortingState,
 } from '@tanstack/react-table';
+import type { DensityVariant } from '@/lib/types';
 import type { TableProps } from './types';
 
 function setup(
@@ -1023,5 +1023,361 @@ describe('Table variant', () => {
     expect(
       within(menu).getByRole('menuitemradio', { name: 'Sort Ascending' }),
     ).toBeInTheDocument();
+  });
+});
+
+describe('Table context', () => {
+  it('should provide default context values', () => {
+    let capturedContext: any;
+
+    render(
+      <TableContext.Consumer>
+        {(value) => {
+          capturedContext = value;
+          return null;
+        }}
+      </TableContext.Consumer>,
+    );
+
+    expect(capturedContext).toBeDefined();
+    expect(capturedContext.rowHighlighting).toEqual([]);
+    expect(typeof capturedContext.onRowHighlightingChange).toBe('function');
+    expect(capturedContext.variant).toBe('cozy');
+    expect(capturedContext.displayNumerals).toBe(true);
+  });
+
+  it('should provide a no-op onRowHighlightingChange by default', () => {
+    let capturedContext: any;
+
+    render(
+      <TableContext.Consumer>
+        {(value) => {
+          capturedContext = value;
+          return null;
+        }}
+      </TableContext.Consumer>,
+    );
+
+    // Should not throw when called
+    expect(() => {
+      capturedContext.onRowHighlightingChange([]);
+      capturedContext.onRowHighlightingChange(['test']);
+      capturedContext.onRowHighlightingChange((prev: string[]) => [
+        ...prev,
+        'new',
+      ]);
+    }).not.toThrow();
+  });
+
+  it('should allow components to consume and use the context', () => {
+    const testHighlighting = ['AF1', 'RCH27'];
+    const mockOnChange = vi.fn();
+
+    render(
+      <TableContext.Consumer>
+        {(defaultValue) => (
+          <TableContext.Provider
+            value={{
+              ...defaultValue,
+              rowHighlighting: testHighlighting,
+              onRowHighlightingChange: mockOnChange,
+            }}
+          >
+            <TableContext.Consumer>
+              {(value) => {
+                value.onRowHighlightingChange(['test']);
+                return <div>{value.rowHighlighting.join(', ')}</div>;
+              }}
+            </TableContext.Consumer>
+          </TableContext.Provider>
+        )}
+      </TableContext.Consumer>,
+    );
+
+    expect(screen.getByText('AF1, RCH27')).toBeInTheDocument();
+    expect(mockOnChange).toHaveBeenCalledWith(['test']);
+  });
+
+  it('should provide no-op moveColumnLeft and moveColumnRight by default', () => {
+    let capturedContext: any;
+
+    render(
+      <TableContext.Consumer>
+        {(value) => {
+          capturedContext = value;
+          return null;
+        }}
+      </TableContext.Consumer>,
+    );
+
+    expect(typeof capturedContext.moveColumnLeft).toBe('function');
+    expect(typeof capturedContext.moveColumnRight).toBe('function');
+
+    // Should not throw when called
+    expect(() => {
+      capturedContext.moveColumnLeft(0);
+      capturedContext.moveColumnRight(1);
+    }).not.toThrow();
+  });
+
+  it('should provide no-op setColumnSelection by default', () => {
+    let capturedContext: any;
+
+    render(
+      <TableContext.Consumer>
+        {(value) => {
+          capturedContext = value;
+          return null;
+        }}
+      </TableContext.Consumer>,
+    );
+
+    expect(typeof capturedContext.setColumnSelection).toBe('function');
+    expect(capturedContext.columnSelection).toBe(null);
+
+    // Should not throw when called
+    expect(() => {
+      capturedContext.setColumnSelection('test');
+      capturedContext.setColumnSelection(null);
+      capturedContext.setColumnSelection((prev: string | null) => prev);
+    }).not.toThrow();
+  });
+
+  it('should provide optional handleSortChange and handleColumnReordering', () => {
+    let capturedContext: any;
+
+    render(
+      <TableContext.Consumer>
+        {(value) => {
+          capturedContext = value;
+          return null;
+        }}
+      </TableContext.Consumer>,
+    );
+
+    // These should be functions (defined as no-ops in the default context)
+    expect(typeof capturedContext.handleSortChange).toBe('function');
+    expect(typeof capturedContext.handleColumnReordering).toBe('function');
+
+    // Should not throw when called
+    expect(() => {
+      capturedContext.handleSortChange?.('columnId', 'asc');
+      capturedContext.handleSortChange?.('columnId', 'desc');
+      capturedContext.handleSortChange?.('columnId', null);
+      capturedContext.handleColumnReordering?.(0);
+    }).not.toThrow();
+  });
+
+  it('should provide all boolean flags with correct defaults', () => {
+    let capturedContext: any;
+
+    render(
+      <TableContext.Consumer>
+        {(value) => {
+          capturedContext = value;
+          return null;
+        }}
+      </TableContext.Consumer>,
+    );
+
+    expect(capturedContext.enableSorting).toBe(true);
+    expect(capturedContext.enableColumnReordering).toBe(true);
+    expect(capturedContext.enableRowActions).toBe(true);
+    expect(capturedContext.persistRowKebabMenu).toBe(true);
+    expect(capturedContext.persistHeaderKebabMenu).toBe(true);
+    expect(capturedContext.persistNumerals).toBe(true);
+    expect(capturedContext.displayNumerals).toBe(true);
+    expect(capturedContext.manualSorting).toBe(false);
+  });
+});
+
+describe('Table numeral column', () => {
+  it('should display numerals by default', () => {
+    render(<Table columns={trackColumns} data={tracks} persistNumerals />);
+
+    const firstRow = within(screen.getAllByRole('row')[1] as HTMLElement);
+    expect(firstRow.getByTestId('numeral')).toBeInTheDocument();
+    expect(firstRow.getByTestId('numeral')).toBeVisible();
+  });
+
+  it('should hide numeral cells when persistNumerals is false', () => {
+    render(
+      <Table
+        columns={trackColumns}
+        data={tracks}
+        persistNumerals={false}
+        displayNumerals={true}
+      />,
+    );
+
+    const firstRow = within(screen.getAllByRole('row')[1] as HTMLElement);
+    const numeralCell = firstRow.getByTestId('numeral').closest('td');
+
+    expect(numeralCell).toHaveClass(styles.hideInRow as string);
+  });
+
+  it('should hide the numeral header when displayNumerals is false', () => {
+    render(
+      <Table columns={trackColumns} data={tracks} displayNumerals={false} />,
+    );
+
+    const headerRow = screen.getAllByRole('row')[0] as HTMLElement;
+    const headers = within(headerRow).getAllByRole('columnheader');
+
+    // First header should be the numeral column with hidden class
+    expect(headers[0]).toHaveClass(styles.hidden as string);
+  });
+
+  it('should hide numeral cells when displayNumerals is false', () => {
+    render(
+      <Table columns={trackColumns} data={tracks} displayNumerals={false} />,
+    );
+
+    const firstRow = within(screen.getAllByRole('row')[1] as HTMLElement);
+    const numeralCell = firstRow.getByTestId('numeral').closest('td');
+
+    expect(numeralCell).toHaveClass(styles.hidden as string);
+  });
+
+  it('should prioritize displayNumerals over persistNumerals', () => {
+    render(
+      <Table
+        columns={trackColumns}
+        data={tracks}
+        displayNumerals={false}
+        persistNumerals={true}
+      />,
+    );
+
+    const firstRow = within(screen.getAllByRole('row')[1] as HTMLElement);
+    const numeralCell = firstRow.getByTestId('numeral').closest('td');
+
+    // displayNumerals=false takes precedence
+    expect(numeralCell).toHaveClass(styles.hidden as string);
+  });
+});
+
+type HighlightingTableProps = {
+  rowHighlighting?: string[];
+  defaultRowHighlighting?: string[];
+  onRowHighlightingChange?: (rowHighlighting: string[]) => void;
+};
+
+function HighlightingTable(props: HighlightingTableProps) {
+  return <Table columns={trackColumns} data={tracks} showCheckbox {...props} />;
+}
+
+describe('Table row highlighting', () => {
+  function setup(props: HighlightingTableProps = {}) {
+    return {
+      ...render(<HighlightingTable {...props} />),
+    };
+  }
+
+  it('should highlight a row when the user clicks it', async () => {
+    setup();
+    const rows = screen.getAllByRole('row');
+    const af1Row = rows[1] as HTMLElement;
+
+    expect(af1Row).not.toHaveClass(styles.highlighted as string);
+
+    await userEvent.click(af1Row);
+
+    expect(af1Row).toHaveClass(styles.highlighted as string);
+  });
+
+  it('should remove highlighting when the user clicks it again', async () => {
+    setup();
+    const rows = screen.getAllByRole('row');
+    const af1Row = rows[1] as HTMLElement;
+
+    await userEvent.click(af1Row);
+    expect(af1Row).toHaveClass(styles.highlighted as string);
+
+    await userEvent.click(af1Row);
+    expect(af1Row).not.toHaveClass(styles.highlighted as string);
+  });
+
+  it('should not propagate click when clicking a checkbox', async () => {
+    setup({ defaultRowHighlighting: ['AF1'] });
+    const rows = screen.getAllByRole('row');
+    const af1Row = rows[1] as HTMLElement;
+
+    expect(af1Row).toHaveClass(styles.highlighted as string);
+
+    const checkbox = within(af1Row).getByRole('checkbox');
+    await userEvent.click(checkbox);
+
+    // highlighting should remain unchanged
+    expect(af1Row).toHaveClass(styles.highlighted as string);
+  });
+
+  it('should not propagate click when clicking the kebab menu', async () => {
+    setup({ defaultRowHighlighting: [] });
+    const rows = screen.getAllByRole('row');
+    const af1Row = rows[1] as HTMLElement;
+
+    expect(af1Row).not.toHaveClass(styles.highlighted as string);
+
+    await userEvent.click(
+      within(af1Row).getByRole('button', { name: 'row 1 actions' }),
+    );
+
+    // highlighting should remain unchanged
+    expect(af1Row).not.toHaveClass(styles.highlighted as string);
+  });
+
+  it('should compose with a passed onClick handler', async () => {
+    const onClick = vi.fn();
+    render(
+      <Table
+        columns={trackColumns}
+        data={tracks}
+        onRowHighlightingChange={onClick}
+      />,
+    );
+
+    const row = screen.getByRole('row', { name: /af1/i });
+    await userEvent.click(row);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call onRowHighlightingChange with the plain next array', async () => {
+    const onRowHighlightingChange = vi.fn();
+    setup({ rowHighlighting: ['AF1'], onRowHighlightingChange });
+
+    const rows = screen.getAllByRole('row');
+    const rch27Row = rows[2] as HTMLElement;
+
+    await userEvent.click(rch27Row);
+
+    expect(onRowHighlightingChange).toHaveBeenCalledTimes(1);
+    const payload = onRowHighlightingChange.mock.calls[0]?.[0];
+    expect(Array.isArray(payload)).toBe(true);
+    expect(payload).toEqual(['AF1', 'RCH27']);
+  });
+
+  it('should omit the id when a row is unhighlighted', async () => {
+    const onRowHighlightingChange = vi.fn();
+    setup({ rowHighlighting: ['AF1', 'RCH27'], onRowHighlightingChange });
+
+    const rows = screen.getAllByRole('row');
+    const af1Row = rows[1] as HTMLElement;
+
+    await userEvent.click(af1Row);
+
+    expect(onRowHighlightingChange).toHaveBeenCalledTimes(1);
+    const payload = onRowHighlightingChange.mock.calls[0]?.[0];
+    expect(payload).toEqual(['RCH27']);
+    expect(payload).not.toContain('AF1');
+  });
+
+  it('should seed highlighting from defaultRowHighlighting', () => {
+    setup({ defaultRowHighlighting: ['AF1', 'RCH27'] });
+
+    const rows = screen.getAllByRole('row');
+    expect(rows[1]).toHaveClass(styles.highlighted as string);
+    expect(rows[2]).toHaveClass(styles.highlighted as string);
   });
 });

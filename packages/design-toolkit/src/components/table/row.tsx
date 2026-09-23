@@ -12,7 +12,7 @@
  */
 
 import { clsx } from '@accelint/design-foundation/lib/utils';
-import { useContext } from 'react';
+import { useContext, type MouseEvent } from 'react';
 import { TableCell } from './cell';
 import { TableContext } from './context';
 import styles from './styles.module.css';
@@ -47,18 +47,21 @@ export function TableRow<T extends RowData>({
   children,
   className,
   row,
+  onClick,
   ...rest
 }: TableRowProps<T>) {
   const cells = row?.getAllCells();
-  const { rowHighlighting, setRowHighlighting } = useContext(TableContext);
+  const { rowHighlighting, onRowHighlightingChange } = useContext(TableContext);
   const isHighlighted = row?.id ? rowHighlighting.includes(row.id) : false;
 
-  const handleRowClick = () => {
-    if (!row?.id) {
+  const handleRowClick = (event: MouseEvent<HTMLTableRowElement>) => {
+    onClick?.(event);
+
+    if (event.defaultPrevented || !row?.id) {
       return;
     }
 
-    setRowHighlighting((prev) => {
+    onRowHighlightingChange((prev) => {
       if (prev.includes(row.id)) {
         return prev.filter((id) => id !== row.id);
       }

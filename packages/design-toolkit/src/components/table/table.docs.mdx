@@ -205,7 +205,7 @@ const [rowPinning, setRowPinning] = useState<RowPinningState>({
 <Canvas of={TableStories.ControlledRowPinning} />
 
 ## Row Highlighting
-Highlights a row on user click. Separate from checkbox selection events. Clicking a row does not select a row. Row highlighting is uncontrolled by default; seed it with `defaultRowHighlighting`, or control it with `rowHighlighting` and `onRowPinningChange`.
+Highlights a row on user click. Separate from checkbox selection events. Clicking a row does not select a row. Row highlighting is uncontrolled by default; seed it with `defaultRowHighlighting`, or control it with `rowHighlighting` and `onRowHighlightingChange`.
 
 ```tsx
 const [rowHighlighting, setRowHighlighting] = useState<string[]>(['tanner']);
@@ -214,7 +214,7 @@ const [rowHighlighting, setRowHighlighting] = useState<string[]>(['tanner']);
   columns={columns}
   data={data}
   rowHighlighting={rowHighlighting}
-  onRowHighlighting={setRowHighlighting}
+  onRowHighlightingChange={setRowHighlighting}
 />
 ```
 
@@ -288,7 +288,7 @@ Only data mode (`columns` + `data`) accepts `variant`. Custom-children mode
 | `defaultRowPinning` | `RowPinningState` | `{ top: [], bottom: [] }` | Initial row pinning for uncontrolled use; ignored while `rowPinning` is set |
 | `onRowPinningChange` | `(rowPinning: RowPinningState) => void` | - | Called with the plain next pinning state |
 | `rowHighlighting` | `string[]` | `[]` | Controlled row highlighting state. Initiated with a row click. |
-| `setRowHighlighting` | `(id?: string) => void` | - | Called when row highlighting changes |
+| `onRowHighlightingChange` | `(rowHighlighting: string[]) => void` | - | Called when row highlighting changes |
 | `kebabPosition` | `'left' \| 'right'` | `'right'` | Position of row action menu |
 | `persistHeaderKebabMenu` | `boolean` | `true` | Always show header kebab menu |
 | `persistRowKebabMenu` | `boolean` | `true` | Always show row kebab menu |

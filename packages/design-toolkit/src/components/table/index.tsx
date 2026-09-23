@@ -85,7 +85,11 @@ function RowActionsMenu<T extends RowData>({ row }: RowActionsMenuProps<T>) {
     enableRowActions && (
       <div className={clsx(hideRowKebab && styles.hideInRow)}>
         <MenuTrigger>
-          <Button variant='icon' aria-label={`row ${row.index + 1} actions`}>
+          <Button
+            variant='icon'
+            aria-label={`row ${row.index + 1} actions`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <Icon>
               <Kebab />
             </Icon>
@@ -187,7 +191,7 @@ export function Table<T extends { id: Key }>({
   persistRowKebabMenu = true,
   persistHeaderKebabMenu = true,
   persistNumerals = false,
-  displayNumerals = false,
+  displayNumerals = true,
   enableSorting = true,
   enableColumnReordering = true,
   enableRowActions = true,
@@ -351,6 +355,7 @@ export function Table<T extends { id: Key }>({
                     !table.getIsAllRowsSelected()
                   }
                   onChange={table.toggleAllRowsSelected}
+                  onClick={(e) => e.stopPropagation()}
                 />
               ),
               cell: ({ row }) => (
@@ -359,6 +364,7 @@ export function Table<T extends { id: Key }>({
                   isIndeterminate={row.getIsSomeSelected()}
                   // v9 row methods are prototype-shared; keep the receiver
                   onChange={(isSelected) => row.toggleSelected(isSelected)}
+                  onClick={(e) => e.stopPropagation()}
                 />
               ),
               size: META_COLUMN_WIDTH,
@@ -500,7 +506,7 @@ export function Table<T extends { id: Key }>({
         handleColumnReordering,
         variant,
         rowHighlighting,
-        setRowHighlighting,
+        onRowHighlightingChange: setRowHighlighting,
       }}
     >
       <table {...rest} className={className}>
