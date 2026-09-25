@@ -31,6 +31,4 @@ export const TableContext = createContext<TableContextValue>({
   handleSortChange: () => undefined,
   handleColumnReordering: () => undefined,
   variant: DEFAULT_TABLE_VARIANT,
-  rowHighlighting: [],
-  onRowHighlightingChange: () => undefined,
 });

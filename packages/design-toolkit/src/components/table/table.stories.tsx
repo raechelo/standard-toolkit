@@ -559,37 +559,6 @@ export const ControlledRowPinning: Story = {
   },
 };
 
-export const ControlledRowHighlighting: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'The `rowHighlighting` prop is the controlled highlighting value: pair it with `onRowHighlightingChange`, which always receives the plain next array of row IDs, never an updater function. The "Highlight joe and jane" button demonstrates external control.',
-      },
-    },
-  },
-  render: (args) => {
-    const [highlighting, setHighlighting] = useState<string[]>(['tanner']);
-
-    return (
-      <div>
-        <Table
-          {...dataArgs(args)}
-          rowHighlighting={highlighting}
-          onRowHighlightingChange={setHighlighting}
-          key={JSON.stringify(args)}
-        />
-        <p style={{ marginTop: '1rem' }}>
-          <strong>Highlighted Row IDs:</strong>{' '}
-          {highlighting.length > 0
-            ? highlighting.join(', ')
-            : 'No rows highlighted'}
-        </p>
-      </div>
-    );
-  },
-};
-
 export const ClientSidePagination: Story = {
   parameters: {
     docs: {

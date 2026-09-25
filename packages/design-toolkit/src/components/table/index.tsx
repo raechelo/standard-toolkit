@@ -156,9 +156,6 @@ function RowActionsMenu<T extends RowData>({ row }: RowActionsMenuProps<T>) {
  * @param props.page - Controlled current page (1-indexed).
  * @param props.defaultPage - Initial page (1-indexed) for uncontrolled use.
  * @param props.onPageChange - Callback receiving the plain next page number.
- * @param props.rowHighlighting - Controlled row highlighting state; without `onRowHighlightingChange` the highlighting stays frozen at this value.
- * @param props.defaultRowHighlighting - Initial row highlighting state for uncontrolled use.
- * @param props.onRowHighlightingChange - Callback receiving the plain next row highlighting state.
  * @returns The rendered Table component.
  *
  * @example
@@ -184,9 +181,6 @@ export function Table<T extends { id: Key }>({
   rowPinning: rowPinningProp,
   defaultRowPinning = EMPTY_ROW_PINNING,
   onRowPinningChange,
-  rowHighlighting: rowHighlightingProp,
-  defaultRowHighlighting = EMPTY_ROW_HIGHLIGHTING,
-  onRowHighlightingChange,
   kebabPosition = 'right',
   persistRowKebabMenu = true,
   persistHeaderKebabMenu = true,
@@ -281,12 +275,6 @@ export function Table<T extends { id: Key }>({
     pageProp,
     defaultPage,
     onPageChange,
-  );
-
-  const [rowHighlighting, setRowHighlighting] = useTableControlledState(
-    rowHighlightingProp,
-    defaultRowHighlighting,
-    onRowHighlightingChange,
   );
 
   const pagination = useMemo(
@@ -505,8 +493,6 @@ export function Table<T extends { id: Key }>({
         handleSortChange,
         handleColumnReordering,
         variant,
-        rowHighlighting,
-        onRowHighlightingChange: setRowHighlighting,
       }}
     >
       <table {...rest} className={className}>

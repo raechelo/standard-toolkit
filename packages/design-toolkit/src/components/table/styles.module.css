@@ -82,25 +82,8 @@
       @apply border-t-(--outline-static);
     }
 
-    @variant has-[+[data-selected]] {
-      @variant not-selected {
-        border-bottom-color: var(--outline-accent-primary-bold);
-      }
-    }
-
     @variant selected {
-      @apply bg-accent-primary-muted;
-
-      border-left-color: var(--outline-accent-primary-bold);
-      border-right-color: var(--outline-accent-primary-bold);
-
-      @variant not-has-[+[data-selected]] {
-        border-bottom-color: var(--outline-accent-primary-bold);
-      }
-
-      @variant first-of-type {
-        border-top-color: var(--outline-accent-primary-bold);
-      }
+      @apply bg-accent-primary-muted border-l-2 border-l-(--outline-accent-primary-bold);
     }
   }
 
@@ -129,9 +112,5 @@
 
   .hidden {
     @apply hidden;
-  }
-
-  .highlighted {
-    @apply bg-accent-primary-muted border-l-2 border-l-[var(--outline-accent-primary-bold)];
   }
 }
